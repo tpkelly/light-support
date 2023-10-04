@@ -6,8 +6,8 @@ function styledEmbed(title, description, colour) {
       description: description,
       color: colour || 0xde153a,
       footer: {
-        text: 'Light RPC'
-        //iconURL: 'https://cdn.discordapp.com/icons/1122673195825246318/9b19ece856f1240b612e116a94395780.png'
+        text: 'Light RPC',
+        iconURL: 'https://cdn.discordapp.com/attachments/1154346363061030974/1156663427595522094/Funky_little_icon_you_got_there.png'
       }
     }
 }
