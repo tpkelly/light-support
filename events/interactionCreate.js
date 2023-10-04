@@ -1,4 +1,5 @@
 const { Events } = require('discord.js');
+const roulette = require('../roulette.js');
 
 function noSuchCommand(client, interaction) {
   interaction.editReply({ content: 'No such command', ephemeral: true })
@@ -34,6 +35,10 @@ async function commandInteraction(interaction, client) {
 
 async function componentInteraction(interaction, client) {
   switch (interaction.customId) {
+    case 'roulette-join':
+      await roulette.join(interaction);
+      return;
+    
     default: throw 'Unknown interaction'
   }
 }
