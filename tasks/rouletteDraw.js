@@ -26,12 +26,19 @@ async function generateMatches(guild, guildConfig) {
   
   return guild.members.fetch()
     .then(() => guild.roles.fetch(guildConfig.rouletteRole))
-    .then(rouletteRole => {
+    .then(async rouletteRole => {
       if (rouletteRole.members.size < 2) {
         return [];
       }
       
-      return shuffleArray(Array.from(rouletteRole.members.keys()));
+      var matches = shuffleArray(Array.from(rouletteRole.members.keys()));
+      
+      // Remove the role from people who got matched
+      for (const member of rouletteRole.members.values()) {
+        await member.roles.remove(rouletteRole);
+      }
+      
+      return matches;
     });
 }
 

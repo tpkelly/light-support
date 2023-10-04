@@ -39,7 +39,8 @@ async function componentInteraction(interaction, client) {
       await roulette.join(interaction);
       return;
     
-    default: throw 'Unknown interaction'
+    default: interaction.reply({ content: 'Unknown interaction', ephemeral: true });
+      break;
   }
 }
 
