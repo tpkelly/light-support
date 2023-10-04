@@ -1,4 +1,4 @@
-const { Client, Collection, IntentsBitField, ActionRowBuilder, ButtonBuilder } = require('discord.js');
+const { Client, IntentsBitField, ActionRowBuilder, ButtonBuilder } = require('discord.js');
 const fs = require('fs');
 
 const client = new Client({
@@ -15,15 +15,17 @@ client.once('ready', async () => {
   try {
     for (const guildConfig of config.all) {
       var guild = client.guilds.resolve(guildConfig.id);
-      if (guild) {
-        var rouletteChannel = guild.channels.resolve(guildConfig.rouletteChannel);
-        
-        embed = common.styledEmbed('Roleplay Roulette', "It's that time again! If you want to enter into the next Roleplay Roulette, hit the button below to register.\n\nIf you've never seen the Roulette before, each month we pair up all our participants and encourage them to organise a small Roleplay scene between themselves - Whenever, wherever and however they want. As long as both of them are happy with it, anything goes!");
-        var row = new ActionRowBuilder()
-          .addComponents(new ButtonBuilder().setLabel('Register').setStyle('Primary').setCustomId('roulette-join'))
-      
-        await rouletteChannel.send({ embeds: [embed], components: [row] });
+      if (!guild) {
+        continue;
       }
+      
+      var rouletteChannel = guild.channels.resolve(guildConfig.rouletteChannel);
+      
+      embed = common.styledEmbed('Roleplay Roulette', "It's that time again! If you want to enter into the next Roleplay Roulette, hit the button below to register.\n\nIf you've never seen the Roulette before, each month we pair up all our participants and encourage them to organise a small Roleplay scene between themselves - Whenever, wherever and however they want. As long as both of them are happy with it, anything goes!");
+      var row = new ActionRowBuilder()
+        .addComponents(new ButtonBuilder().setLabel('Register').setStyle('Primary').setCustomId('roulette-join'))
+    
+      await rouletteChannel.send({ embeds: [embed], components: [row] });
     }
   } finally {
     client.destroy();
