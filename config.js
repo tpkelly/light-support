@@ -6,8 +6,8 @@ const testServer = {
 
 const lightRPC = {
   id: '1122673195825246318',
-  rouletteRole: '',
-  rouletteChannel: ''
+  rouletteRole: '1162145407888003215',
+  rouletteChannel: '1153338811015757864'
 }
 
 module.exports = {
