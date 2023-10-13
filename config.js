@@ -6,7 +6,7 @@ const testServer = {
 }
 
 const lightRPC = {
-  id: '1122673195825246318',
+  id: '1153335701186809856',
   rouletteRole: '1162145407888003215',
   rouletteChannel: '1153338811015757864',
   notifyChannel: '1162419961126457415'
