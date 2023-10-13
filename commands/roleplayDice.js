@@ -70,11 +70,26 @@ const common = require('../common.js');
       'Pla Enni - Il Mheg'
     ]},
     { name: 'Endwalker', location: [
+      'Unnamed Island',
+      'Noumenon - Old Sharlayan',
+      'The Last Stand - Old Sharlayan',
+      'The Agora - Old Sharlayan',
+      'Sharlayan Hamlet - Labyrinthos',
+      'The Great Work - Thavnair',
+      "Kadjaya's Footsteps - Thavnair",
+      "Mehryde's Meyhana - Radz-at-Han",
+      'Ruveydah Fibers - Radz-at-Han',
+      'Tertium - ||Garlemald||',
+      'The Last Dregs - Ultima Thule',
+      "The Watcher's Palace - Mare Lamentorum",
+      'Greatest Endsvale - Mare Lamentorum',
+      'Anagnorisis - ||Elpis||',
+      'Propylaion - ||Elpis||'
     ]}
   ]
 
-const setting = [ 'Business meeting', 'Random encounter', 'Social event', 'Just a dream...' ];
-const how = [ 'Friendly', 'Polite', 'Tense', 'Fight!!!' ];
+const setting = [ 'Business meeting', 'Random encounter', 'Social event', 'Just a dream...', 'Adventure', 'Sightseeing/Field trip', 'Shopping', 'Hunting' ];
+const how = [ 'Friendly', 'Polite', 'Tense', 'Fight!!!', 'Competition', 'Teaming up' ];
 
 function randomElement(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
