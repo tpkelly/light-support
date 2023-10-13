@@ -38,6 +38,18 @@ async function componentInteraction(interaction, client) {
     case 'roulette-join':
       await roulette.join(interaction);
       return;
+
+    case 'roulette-feedback':
+      roulette.feedback(interaction);
+      break;
+      
+    case 'roulette-feedback-submit':
+      roulette.feedbackSubmit(interaction);
+      break;
+    
+    case 'roulette-problem':
+      roulette.problem(interaction);
+     break;
     
     default: interaction.reply({ content: 'Unknown interaction', ephemeral: true });
       break;

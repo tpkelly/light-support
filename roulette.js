@@ -12,11 +12,40 @@ async function join(interaction) {
     return;
   }
   
-  
   interaction.member.roles.add(guildConfig.rouletteRole, 'Signed up for Roleplay Roulette');
   interaction.editReply({ embeds: [common.styledEmbed('Roleplay Roulette', 'You have been registered for the next Roleplay Roulette')]});
 }
 
+async function feedback(interaction) {
+  const modal = new ModalBuilder()
+    .setCustomId('roulette-ticket-submit')
+    .setTitle("Roulette Feedback");
+   
+  modal.addComponents(
+    new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('feedback').setStyle(TextInputStyle.Paragraph).setLabel('Feedback').setMaxLength(1500).setRequired(true)))
+    
+  await interaction.showModal(modal);
+}
+
+async function feedbackSubmit(interaction) {
+  var feedback = interaction.fields.getTextInputValue('feedback')
+  var guildConfig = config[interaction.guild.id];
+  var feedbackChannel = interaction.guild.channels.resolve(guildConfig.notifyChannel);
+  
+  await feedbackChannel.send({ embeds: [common.styledEmbed(`Roulette Feedback from ${interaction.member.displayName}`, feedback)] });
+}
+
+async function problem(interaction) {
+  var guildConfig = config[interaction.guild.id];
+  var feedbackChannel = interaction.guild.channels.resolve(guildConfig.notifyChannel);
+  
+  await feedbackChannel.send({ embeds: [common.styledEmbed('Roulette Issue', `<@${interaction.member.id}> is having an issue in <#${interaction.channel.id}> that requires assistance`)] });
+}
+
+
 module.exports = {
-  join: join
+  join: join,
+  feedback: feedback,
+  feedbackSubmit: feedbackSubmit,
+  problem: problem
 };
