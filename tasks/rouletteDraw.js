@@ -57,7 +57,7 @@ async function notifyMatches(guild, guildConfig, matches) {
 async function setupRouletteChannel(parentChannel, roleplayers, config) {
   await parentChannel.threads.create({
     name: 'Roleplay Roulette',
-    type: ChannelType.PrivateThread,
+    type: ChannelType.GuildPrivateThread,
     invitable: false
   }).then(async thread => {
     // Invite the matches together
