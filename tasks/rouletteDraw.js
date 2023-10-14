@@ -32,12 +32,7 @@ async function generateMatches(guild, guildConfig) {
       }
       
       var matches = shuffleArray(Array.from(rouletteRole.members.keys()));
-      
-      // Remove the role from people who got matched
-      for (const member of rouletteRole.members.values()) {
-        await member.roles.remove(rouletteRole);
-      }
-      
+     
       return matches;
     });
 }
@@ -51,15 +46,15 @@ async function notifyMatches(guild, guildConfig, matches) {
   
   // We have an odd number, so make the first pair a triple
   if (matches.length % 2 == 1) {
-    await setupRouletteChannel(rouletteChannel, [matches.pop(), matches.pop(), matches.pop()]);
+    await setupRouletteChannel(rouletteChannel, [matches.pop(), matches.pop(), matches.pop()], guildConfig);
   }
   
   while (matches.length > 0) {
-    await setupRouletteChannel(rouletteChannel, [matches.pop(), matches.pop()]);
+    await setupRouletteChannel(rouletteChannel, [matches.pop(), matches.pop()], guildConfig);
   }
 }
 
-async function setupRouletteChannel(parentChannel, roleplayers) {
+async function setupRouletteChannel(parentChannel, roleplayers, config) {
   await parentChannel.threads.create({
     name: 'Roleplay Roulette',
     type: ChannelType.PrivateThread,
@@ -68,6 +63,7 @@ async function setupRouletteChannel(parentChannel, roleplayers) {
     // Invite the matches together
     for (const player of roleplayers) {
       await thread.members.add(player);
+      await member.roles.remove(config.rouletteRole);
     }
     
     var embed = common.styledEmbed('Roleplay Roulette', 'Welcome to the Roleplay Roulette!\n\nThe aim of the roulette is to match people together and have them organise some roleplay together. It might be a small scene alone, or you might want to meet at one of the many venues to roleplay together there instead.\n\nIt is down to you both to decide when, where and how you want to roleplay. Maybe a fight scene? A small comfortable chat? A chance encounter? Old friends reuniting? Just make sure to do it this month!\n\nIf you have any concerns, or feedback (positive or negative!), use the buttons below to discretely signal for help. Your partner cannot see if you use them, but do make an attempt to roleplay before asking for help.\n\n**And last of all, have fun!**');
