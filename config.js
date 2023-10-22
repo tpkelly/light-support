@@ -9,7 +9,7 @@ const lightRPC = {
   id: '1153335701186809856',
   rouletteRole: '1162145407888003215',
   rouletteChannel: '1153338811015757864',
-  notifyChannel: '1162419961126457415'
+  notifyChannel: '1165645990066405376'
 }
 
 module.exports = {
