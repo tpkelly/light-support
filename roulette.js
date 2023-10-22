@@ -1,4 +1,4 @@
-const { WebhookClient } = require('discord.js');
+const { WebhookClient, ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
 const common = require('./common.js');
 const config = require('./config.js');
 
@@ -18,7 +18,7 @@ async function join(interaction) {
 
 async function feedback(interaction) {
   const modal = new ModalBuilder()
-    .setCustomId('roulette-ticket-submit')
+    .setCustomId('roulette-feedback-submit')
     .setTitle("Roulette Feedback");
    
   modal.addComponents(
@@ -28,6 +28,8 @@ async function feedback(interaction) {
 }
 
 async function feedbackSubmit(interaction) {
+  await interaction.deferUpdate();
+  
   var feedback = interaction.fields.getTextInputValue('feedback')
   var guildConfig = config[interaction.guild.id];
   var feedbackChannel = interaction.guild.channels.resolve(guildConfig.notifyChannel);
