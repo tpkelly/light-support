@@ -25,7 +25,7 @@ client.once('ready', async () => {
       var row = new ActionRowBuilder()
         .addComponents(new ButtonBuilder().setLabel('Register').setStyle('Primary').setCustomId('roulette-join'))
     
-      await rouletteChannel.send({ embeds: [embed], components: [row] });
+      await rouletteChannel.send({ content: '<@&1169583360847400960>', embeds: [embed], components: [row] });
     }
   } finally {
     client.destroy();
