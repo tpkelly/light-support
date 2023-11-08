@@ -1,5 +1,6 @@
 const { Client, Collection, IntentsBitField, ApplicationCommandType } = require('discord.js');
 const fs = require('fs');
+const { MongoClient } = require('mongodb');
 
 const client = new Client({
   intents: [IntentsBitField.Flags.GuildMembers, IntentsBitField.Flags.Guilds],
@@ -11,6 +12,8 @@ const config = require('./config.js');
 
 client.once('ready', async () => {
   client.user.setActivity("If broke, return to Kazenone");
+  
+  client.mongo = new MongoClient(auth.mongodb).db();
   
   // Register commands
   client.commands = new Collection();
