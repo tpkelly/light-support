@@ -1,5 +1,6 @@
 const { Events } = require('discord.js');
 const roulette = require('../roulette.js');
+const ticket = require('../ticket.js');
 
 function noSuchCommand(client, interaction) {
   interaction.editReply({ content: 'No such command', ephemeral: true })
@@ -34,10 +35,34 @@ async function commandInteraction(interaction, client) {
 }
 
 async function componentInteraction(interaction, client) {
+  if (interaction.customId.startsWith('ticket-new-')) {
+    ticket.create(interaction, interaction.guild, interaction.user, interaction.customId)
+    return;
+  } else if (interaction.customId.startsWith('ticket-reason-')) {
+    ticket.reasonPrompt(interaction);
+    return;
+  }
+  
   switch (interaction.customId) {
+    case 'ticket-close':
+      ticket.close(interaction, interaction.channel);
+      break;
+      
+    case 'ticket-reopen':
+      ticket.reopen(interaction, interaction.channel, interaction.message);
+      break;
+
+    case 'ticket-delete':
+      ticket.delete(interaction, interaction.channel);
+      break;
+      
+    case 'ticket-transcript':
+      ticket.transcript(interaction.channel);
+      break;
+
     case 'roulette-join':
       await roulette.join(interaction);
-      return;
+      break;
 
     case 'roulette-feedback':
       roulette.feedback(interaction);
