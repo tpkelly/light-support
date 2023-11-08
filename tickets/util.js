@@ -11,8 +11,8 @@ function defaultPermissions(guild) {
   return [
   // Allow bot to see its own tickets
   {
-    id: '1151222964885393539',
-    type: RoleType.member,
+    id: '1161270926676082793',
+    type: RoleType.role,
     allow: [
       PermissionsBitField.Flags.ViewChannel,
       PermissionsBitField.Flags.SendMessages,
@@ -63,8 +63,8 @@ async function setPermissions(ticket, roles, authorIds) {
   var permissions = [
     // Allow bot to see its own tickets
     {
-      id: '1151222964885393539',
-      type: RoleType.member,
+      id: '1161270926676082793',
+      type: RoleType.role,
       allow: [
         PermissionsBitField.Flags.ViewChannel,
       ]

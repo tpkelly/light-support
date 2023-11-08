@@ -31,7 +31,7 @@ async function sendBoilerplate(ticket, users, config, ticketReason) {
   }
 
   ticket.send({
-    content: `Hello <@${users.join('> <@')}>! One of our <@&${config.roles.join('> <@&')}> will be with you as soon as they can. Please note that tickets may be logged.`,
+    content: `Hello <@${users.join('> <@')}>! One of our <@&${config.roles.join('> <@&')}> will be with you as soon as they can. Please note that tickets are logged for reference in case of later issues/complaints, and a copy may be requested for transparency.`,
     embeds: [embed],
     components: [row]
   });
