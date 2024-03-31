@@ -106,7 +106,7 @@ async function closeTicket(interaction, ticket) {
 
   interaction.reply({ embeds: [common.styledEmbed('Ticket closed', 'Generating automatic transcript')], components: [pendingRow]})
     .then(() => tickutil.renameTicket(ticket, { closed: true }))
-    .then(() => transcript.create(ticket.client, ticket))
+    .then(() => transcript.create(ticket.client, ticket, ticketAuthors))
     .then(() => interaction.editReply({ embeds: [common.styledEmbed('Ticket closed', 'Generated automatic transcript')], components: [finishedRow]}))
     .then(() => log.logClosed(ticket))
     .then(() => console.log(`Closing ticket ${ticket.name}`))

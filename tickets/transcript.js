@@ -87,7 +87,7 @@ async function ticketMessageObject(message) {
 	}
 }
 
-async function formatMessages(client, channel, messages) {
+async function formatMessages(client, channel, messages, authors) {
   var allMessages = await Promise.all(messages.map(m => ticketMessageObject(m)))
 
   // Turn groups into HTML somehow
@@ -102,6 +102,15 @@ async function formatMessages(client, channel, messages) {
   var ticketArchive = await archiveGuild.channels.fetch('885290405850128417');
  
   var transcriptMessage = await ticketArchive.send({files: [file] });
+  for (const author of authors) {
+    try {
+      var recipient = await channel.guild.members.fetch(author);
+      var recipientDM = recipient.dmChannel || await recipient.createDM();
+      await recipientDM.send({files: [file] });
+    } catch {
+      console.error(`Could not send transcript to ${author}`);
+    }
+  }
   
   await client.mongo.collection('ticket').findOneAndUpdate(
     { _id: channel.id},
@@ -109,10 +118,10 @@ async function formatMessages(client, channel, messages) {
   );
 }
 
-async function create(client, ticket) {
+async function create(client, ticket, authors) {
   console.log(`Transcribing ticket ${ticket.name}`);
   var allMessages = await fetchMessages(ticket);
-  await formatMessages(client, ticket, allMessages);
+  await formatMessages(client, ticket, allMessages, authors);
 }
 
 module.exports = {
