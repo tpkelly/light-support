@@ -74,7 +74,11 @@ async function componentInteraction(interaction, client) {
     
     case 'roulette-problem':
       roulette.problem(interaction);
-     break;
+      break;
+    
+    case 'roulette-preference':
+      roulette.preference(interaction);
+      break;
     
     default: interaction.reply({ content: 'Unknown interaction', ephemeral: true });
       break;

@@ -37,6 +37,46 @@ async function feedbackSubmit(interaction) {
   await feedbackChannel.send({ embeds: [common.styledEmbed(`Roulette Feedback from ${interaction.member.displayName}`, feedback)] });
 }
 
+async function preference(interaction) {
+  await interaction.deferUpdate();
+
+  var roleplayer = interaction.member;
+  var channel = interaction.channel;
+  var value = interaction.values[0]
+  
+  var collection = interaction.client.mongo.collection('roulette');
+  
+  // Remove the interactee from all matches
+  if (value == 'none') {
+    var doc = await collection.findOne({ _id: roleplayer.id })
+    var matches = doc.matches || [];
+    for (const id of matches) {
+      var otherDoc = await collection.findOne({ _id: id })
+      var otherMatches = otherDoc.matches || [];
+      await collection.findOneAndUpdate({ _id: id }, { $set: { matches: otherMatches.filter(x => x != roleplayer.id) }});
+    }
+    
+    await collection.deleteOne({ _id: roleplayer.id });
+  } else if (value != 'any') {
+    try {
+      // Remove the interactee from one match
+      var doc = await collection.findOne({ _id: roleplayer.id })
+      var matches = doc.matches || [];
+      await collection.findOneAndUpdate({ _id: roleplayer.id }, { $set: { matches: matches.filter(x => x != value) }});
+      
+      // And the reverse
+      doc = await collection.findOne({ _id: value })
+      matches = doc.matches || [];
+      await collection.findOneAndUpdate({ _id: value }, { $set: { matches: matches.filter(x => x != roleplayer.id) }});
+    } catch (e) {
+      console.error(`Error with removing ${roleplayer.id}: ${e}`);
+    }
+  }
+  
+  // Channel is finished, remove it
+  await channel.delete()
+}
+
 async function problem(interaction) {
   var guildConfig = config[interaction.guild.id];
   var feedbackChannel = interaction.guild.channels.resolve(guildConfig.notifyChannel);
@@ -49,5 +89,6 @@ module.exports = {
   join: join,
   feedback: feedback,
   feedbackSubmit: feedbackSubmit,
+  preference: preference,
   problem: problem
 };
