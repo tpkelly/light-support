@@ -118,10 +118,7 @@ async function notifyMatches(guild, guildConfig, matches) {
   
   for (const key of Object.keys(matches)) {
     var options = matches[key]
-    await collection.findOneAndUpdate(
-      { _id: key },
-      { $set: { matches: options } }
-    );
+    await collection.insertOne({ _id: key, matches: options });
   
     await rouletteChannel.threads.create({
       name: 'Roulette Preference',

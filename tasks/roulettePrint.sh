@@ -1,0 +1,1 @@
+mongosh --file mongoSearch --quiet
