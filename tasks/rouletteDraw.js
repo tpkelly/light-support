@@ -10,48 +10,72 @@ const auth = require('../auth.json');
 const config = require('../config.js');
 const common = require('../common.js');
 
-// Fisher-Yates shuffle algorithm
-function shuffleArray(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+function removeMatch(id, matches) {
+  for (const match of matches[id]) {
+    matches[match] = matches[match].filter(x => x != id)
   }
-  return arr;
+  
+  delete matches[id];
+  
+  return matches;
 }
 
-async function generateMatches(guild, guildConfig) {
+async function drawTriple(channel, config, matches, sortedMatches) {
+  for (const id of sortedMatches) {
+    for (const firstMatch of matches[id]) {
+      for (const secondMatch of matches[firstMatch])
+      {
+        // Found our triple
+        if (matches[secondMatch].includes(id)) {
+          matches = removeMatch(id, matches)
+          matches = removeMatch(firstMatch, matches)
+          matches = removeMatch(secondMatch, matches)
+          
+          await setupRouletteChannel(channel, [id, firstMatch, secondMatch], config)
+          return matches;
+        }
+      }
+    }
+  }
+  
+  console.error('Could not find a triple');
+  return matches;
+}
+
+async function generateMatches(guild, config) {
   if (!guild) {
     return [];
   }
   
-  return guild.members.fetch()
-    .then(() => guild.roles.fetch(guildConfig.rouletteRole))
-    .then(async rouletteRole => {
-      if (rouletteRole.members.size < 2) {
-        return [];
-      }
-      
-      var matches = shuffleArray(Array.from(rouletteRole.members.keys()));
-     
-      return matches;
-    });
-}
+  var mongo = new MongoClient(auth.mongodb).db();
+  var collection = mongo.collection('roulette');
+  var matches = {};
+  for (const row of collection.find().toArray()) {
+    matches[row['_id']] = row['matches'];
+  }
+  
+  var rouletteChannel = guild.channels.resolve(config.rouletteChannel);
+  
+  var sortedMatches = Object.keys(matches).sort((a,b) => matches[a].length - matches[b].length).filter(x => x != '181499334855098379');
+  // Odd number of matches, try to find a triple
+  if (sortedMatches.length % 2 == 1) {
+    matches = drawTriple(matches, sortedMatches);
+  }
+  
+  while (Object.keys(matches).length >= 2) {
+    // Prioritise people with fewest options
+    sortedMatches = Object.keys(matches).sort((a,b) => matches[a].length - matches[b].length).filter(x => x != '181499334855098379');
 
-async function notifyMatches(guild, guildConfig, matches) {
-  if (matches.length == 0) {
-    return;
+    if (matches[sortedMatches[0]].length > 0) {
+      await setupRouletteChannel(channel, [sortedMatches[0], matches[sortedMatches[0]][0]], config)
+      matches = removeMatch(matches[sortedMatches[0]][0], matches)
+    } else { // We ran out of matches for this person, so go to Plan B
+      await setupRouletteChannel(channel, [sortedMatches[0], '181499334855098379'], config)
+    }
+    matches = removeMatch(sortedMatches[0], matches);
   }
   
-  var rouletteChannel = guild.channels.resolve(guildConfig.rouletteChannel);
-  
-  // We have an odd number, so make the first pair a triple
-  if (matches.length % 2 == 1) {
-    await setupRouletteChannel(rouletteChannel, [matches.pop(), matches.pop(), matches.pop()], guildConfig);
-  }
-  
-  while (matches.length > 0) {
-    await setupRouletteChannel(rouletteChannel, [matches.pop(), matches.pop()], guildConfig);
-  }
+  console.log('Done with matches');
 }
 
 async function setupRouletteChannel(parentChannel, roleplayers, config) {
@@ -79,11 +103,9 @@ async function setupRouletteChannel(parentChannel, roleplayers, config) {
 client.once('ready', async () => {
   console.log(`Roulette Draw task as ${client.user.tag} @ ${new Date().toLocaleString()}!`);
   try {
-    for (const guildConfig of config.all) {
-      var guild = client.guilds.resolve(guildConfig.id);
-      await generateMatches(guild, guildConfig)
-        .then(matches => notifyMatches(guild, guildConfig, matches));
-    }
+    var guildConfig = config.lightRPC;
+    var guild = client.guilds.resolve(guildConfig.id);
+    await generateMatches(guild, guildConfig)
   } catch (err) {
     console.error(err);
   } finally {
