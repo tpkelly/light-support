@@ -48,6 +48,7 @@ async function preference(interaction) {
   
   // Remove the interactee from all matches
   if (value == 'none') {
+    console.log(`${roleplayer.id} removed themselves from the roulette`);
     var doc = await collection.findOne({ _id: roleplayer.id })
     var matches = doc.matches || [];
     for (const id of matches) {
@@ -60,6 +61,7 @@ async function preference(interaction) {
   } else if (value != 'any') {
     try {
       // Remove the interactee from one match
+      console.log(`${roleplayer.id} vetoed ${value}`);
       var doc = await collection.findOne({ _id: roleplayer.id })
       var matches = doc.matches || [];
       await collection.findOneAndUpdate({ _id: roleplayer.id }, { $set: { matches: matches.filter(x => x != value) }});
@@ -71,6 +73,8 @@ async function preference(interaction) {
     } catch (e) {
       console.error(`Error with removing ${roleplayer.id}: ${e}`);
     }
+  } else {
+    console.log(`${roleplayer.id} accepted all options`);
   }
   
   // Channel is finished, remove it
