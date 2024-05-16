@@ -1,4 +1,5 @@
 const { Client, IntentsBitField, ChannelType, ActionRowBuilder, ButtonBuilder } = require('discord.js');
+const { MongoClient } = require('mongodb');
 const fs = require('fs');
 
 const client = new Client({
@@ -10,8 +11,14 @@ const auth = require('../auth.json');
 const config = require('../config.js');
 const common = require('../common.js');
 
+const KazeID = '181499334855098379'
+
 function removeMatch(id, matches) {
-  for (const match of matches[id]) {
+  if (id == KazeID) {
+    return matches;
+  }
+  
+  for (const match of matches[id].filter(x => x != KazeID)) {
     matches[match] = matches[match].filter(x => x != id)
   }
   
@@ -26,7 +33,7 @@ async function drawTriple(channel, config, matches, sortedMatches) {
       for (const secondMatch of matches[firstMatch])
       {
         // Found our triple
-        if (matches[secondMatch].includes(id)) {
+        if (secondMatch == KazeID || matches[secondMatch].includes(id)) {
           matches = removeMatch(id, matches)
           matches = removeMatch(firstMatch, matches)
           matches = removeMatch(secondMatch, matches)
@@ -50,27 +57,27 @@ async function generateMatches(guild, config) {
   var mongo = new MongoClient(auth.mongodb).db();
   var collection = mongo.collection('roulette');
   var matches = {};
-  for (const row of collection.find().toArray()) {
+  for (const row of await collection.find().toArray()) {
     matches[row['_id']] = row['matches'];
   }
   
   var rouletteChannel = guild.channels.resolve(config.rouletteChannel);
   
-  var sortedMatches = Object.keys(matches).sort((a,b) => matches[a].length - matches[b].length).filter(x => x != '181499334855098379');
+  var sortedMatches = Object.keys(matches).sort((a,b) => matches[a].length - matches[b].length).filter(x => x != KazeID);
   // Odd number of matches, try to find a triple
   if (sortedMatches.length % 2 == 1) {
-    matches = drawTriple(matches, sortedMatches);
+    matches = await drawTriple(rouletteChannel, config, matches, sortedMatches);
   }
   
   while (Object.keys(matches).length >= 2) {
     // Prioritise people with fewest options
-    sortedMatches = Object.keys(matches).sort((a,b) => matches[a].length - matches[b].length).filter(x => x != '181499334855098379');
+    sortedMatches = Object.keys(matches).sort((a,b) => matches[a].length - matches[b].length).filter(x => x != KazeID);
 
     if (matches[sortedMatches[0]].length > 0) {
-      await setupRouletteChannel(channel, [sortedMatches[0], matches[sortedMatches[0]][0]], config)
+      await setupRouletteChannel(rouletteChannel, [sortedMatches[0], matches[sortedMatches[0]][0]], config)
       matches = removeMatch(matches[sortedMatches[0]][0], matches)
     } else { // We ran out of matches for this person, so go to Plan B
-      await setupRouletteChannel(channel, [sortedMatches[0], '181499334855098379'], config)
+      await setupRouletteChannel(rouletteChannel, [sortedMatches[0], KazeID], config)
     }
     matches = removeMatch(sortedMatches[0], matches);
   }
@@ -79,7 +86,7 @@ async function generateMatches(guild, config) {
 }
 
 async function setupRouletteChannel(parentChannel, roleplayers, config) {
-  await parentChannel.threads.create({
+  return parentChannel.threads.create({
     name: 'Roleplay Roulette',
     type: ChannelType.PrivateThread,
     invitable: false
@@ -103,7 +110,7 @@ async function setupRouletteChannel(parentChannel, roleplayers, config) {
 client.once('ready', async () => {
   console.log(`Roulette Draw task as ${client.user.tag} @ ${new Date().toLocaleString()}!`);
   try {
-    var guildConfig = config.lightRPC;
+    var guildConfig = config['1153335701186809856'];
     var guild = client.guilds.resolve(guildConfig.id);
     await generateMatches(guild, guildConfig)
   } catch (err) {

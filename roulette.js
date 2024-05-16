@@ -70,6 +70,10 @@ async function preference(interaction) {
       doc = await collection.findOne({ _id: value })
       matches = doc.matches || [];
       await collection.findOneAndUpdate({ _id: value }, { $set: { matches: matches.filter(x => x != roleplayer.id) }});
+      
+      // And remove their role
+      var guildConfig = config[interaction.guild.id];
+      await roleplayer.roles.remove(guildConfig.rouletteRole);
     } catch (e) {
       console.error(`Error with removing ${roleplayer.id}: ${e}`);
     }
