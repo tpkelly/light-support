@@ -33,7 +33,7 @@ async function drawTriple(channel, config, matches, sortedMatches) {
       for (const secondMatch of matches[firstMatch])
       {
         // Found our triple
-        if (secondMatch == KazeID || matches[secondMatch].includes(id)) {
+        if (matches[secondMatch] && matches[secondMatch].includes(id)) {
           matches = removeMatch(id, matches)
           matches = removeMatch(firstMatch, matches)
           matches = removeMatch(secondMatch, matches)
@@ -69,7 +69,7 @@ async function generateMatches(guild, config) {
     matches = await drawTriple(rouletteChannel, config, matches, sortedMatches);
   }
   
-  while (Object.keys(matches).length >= 2) {
+  while (Object.keys(matches).length >= 1) {
     // Prioritise people with fewest options
     sortedMatches = Object.keys(matches).sort((a,b) => matches[a].length - matches[b].length).filter(x => x != KazeID);
 
