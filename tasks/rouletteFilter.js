@@ -115,6 +115,13 @@ async function notifyMatches(guild, guildConfig, matches) {
   collection.drop();
   
   collection = mongo.collection('roulette');
+
+  var memberNames = {};
+  await guild.members.fetch(Object.keys(matches));
+  for (const key of Object.keys(matches)) {
+    var member = guild.members.cache[key]
+    memberNames[key] = `${member.displayName} (${member.user.tag})`
+  }
   
   for (const key of Object.keys(matches)) {
     var options = matches[key]
@@ -136,7 +143,7 @@ async function notifyMatches(guild, guildConfig, matches) {
       );
 
       for (var i = 0; i < options.length; i++) {
-        embedText += `\nOption ${i+1}: <@${options[i]}>`
+        embedText += `\nOption ${i+1}: <@${memberNames[options[i]]}>`
         selectOptions.addOptions(new StringSelectMenuOptionBuilder().setLabel(`Remove Option ${i+1}`).setValue(options[i]));
       }
       
