@@ -79,12 +79,34 @@ const common = require('../common.js');
       "Kadjaya's Footsteps - Thavnair",
       "Mehryde's Meyhana - Radz-at-Han",
       'Ruveydah Fibers - Radz-at-Han',
-      'Tertium - ||Garlemald||',
+      'Tertium - Garlemald',
       'The Last Dregs - Ultima Thule',
       "The Watcher's Palace - Mare Lamentorum",
       'Greatest Endsvale - Mare Lamentorum',
-      'Anagnorisis - ||Elpis||',
-      'Propylaion - ||Elpis||'
+      'Anagnorisis - Elpis',
+      'Propylaion - Elpis'
+    ]},
+    { name: 'Dawntrail', location: [
+      "Xbaltav Ty'e - Tuliyollal",
+      "Bayside Bevy - Tuliyollal",
+      "Dirgible Landing - Tuliyollal",
+      "Panaqpelu Retreat - Urqopacha",
+      "Ok'hanu - Kozama'uka",
+      "Many Fires - Kozama'uka",
+      "Earthenshire - Kozama'uka",
+      "Kozanuakiy - Kozama'uka",
+      "Iq Br'aax - Yak T'el",
+      "Garden of the Stars - Yak T'el",
+      "Mammook - Yak T'el",
+      "||Hhusauahwi - Shaaloani|| (DT)",
+      "||Otsekarri Shore - Shaaloani|| (DT)",
+      "||Shaaloani Station - Shaaloani|| (DT)",
+      "||Yowekwa Canyon - Shaaloani|| (DT)",
+      "||True Vue - Solution 9|| (DT)",
+      "||Neon Stein - Solution 9|| (DT)",
+      "||Residential Radii - Solution 9|| (DT)",
+      "||Mosaic - Solution 9|| (DT)",
+      "||Nexus Arcade - Solution 9|| (DT)",
     ]}
   ]
 
@@ -104,17 +126,26 @@ module.exports = {
       { name: 'Heavensward', value: 'Heavensward' },
       { name: 'Stormblood', value: 'Stormblood' },
       { name: 'Shadowbringers', value: 'Shadowbringers' },
-      { name: 'Endwalker', value: 'Endwalker' }
-    ]}
+      { name: 'Endwalker', value: 'Endwalker' },
+      { name: 'Dawntrail', value: 'Dawntrail' },
+    ]},
+    { type: ApplicationCommandOptionType.Boolean, name: "latest-only", description: "Only show locations from the latest expansion chosen", required: false }
   ],
   executeInteraction: async(interaction) => {
     var upToExpansion = interaction.options.getString('progression') ?? 'Endwalker';
+    var latestOnly = interaction.options.getString('latestOnly') ?? false;
+    
     var filteredLocations = [];
-    for (const expansion of expansionLocations) {
-      filteredLocations = filteredLocations.concat(expansion.locations);
-      
-      if (expansion.name === upToExpansion) {
-        break;
+
+    if (latestOnly) {
+      filteredLocations = expansionLocations.find(exp => exp.name == upToExpansion).locations;
+    } else {
+      for (const expansion of expansionLocations) {
+        filteredLocations = filteredLocations.concat(expansion.locations);
+        
+        if (expansion.name === upToExpansion) {
+          break;
+        }
       }
     }
     
