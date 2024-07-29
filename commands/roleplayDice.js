@@ -69,7 +69,7 @@ const common = require('../common.js');
       'The Capitol - Tempest',
       'Pla Enni - Il Mheg'
     ]},
-    { name: 'Endwalker', location: [
+    { name: 'Endwalker', locations: [
       'Unnamed Island',
       'Noumenon - Old Sharlayan',
       'The Last Stand - Old Sharlayan',
@@ -86,7 +86,7 @@ const common = require('../common.js');
       'Anagnorisis - Elpis',
       'Propylaion - Elpis'
     ]},
-    { name: 'Dawntrail', location: [
+    { name: 'Dawntrail', locations: [
       "Xbaltav Ty'e - Tuliyollal",
       "Bayside Bevy - Tuliyollal",
       "Dirgible Landing - Tuliyollal",
@@ -133,7 +133,7 @@ module.exports = {
   ],
   executeInteraction: async(interaction) => {
     var upToExpansion = interaction.options.getString('progression') ?? 'Endwalker';
-    var latestOnly = interaction.options.getString('latestOnly') ?? false;
+    var latestOnly = interaction.options.getBoolean('latest-only') ?? false;
     
     var filteredLocations = [];
 
