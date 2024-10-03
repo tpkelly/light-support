@@ -69,6 +69,8 @@ async function generateMatches(guild, config) {
     matches = await drawTriple(rouletteChannel, config, matches, sortedMatches);
   }
   
+  var unmatched = [];
+  
   while (Object.keys(matches).length >= 1) {
     // Prioritise people with fewest options
     sortedMatches = Object.keys(matches).sort((a,b) => matches[a].length - matches[b].length).filter(x => x != KazeID);
@@ -77,9 +79,15 @@ async function generateMatches(guild, config) {
       await setupRouletteChannel(rouletteChannel, [sortedMatches[0], matches[sortedMatches[0]][0]], config)
       matches = removeMatch(matches[sortedMatches[0]][0], matches)
     } else { // We ran out of matches for this person, so go to Plan B
-      await setupRouletteChannel(rouletteChannel, [sortedMatches[0], KazeID], config)
+      unmatched.push(sortedMatches[0]);
     }
+    
     matches = removeMatch(sortedMatches[0], matches);
+  }
+  
+  // Plan B: Pair together anybody who was unable to be matched
+  for (var i = 0; i < unmatched.length; i+=2) {
+    await setupRouletteChannel(rouletteChannel, [unmatched[i], unmatched[i+1]], config)
   }
   
   console.log('Done with matches');

@@ -135,7 +135,7 @@ async function notifyMatches(guild, guildConfig, matches) {
       // Invite the roleplayer
       await thread.members.add(key);
       
-      var embedText = "Welcome to the Roleplay Pre-Roulette!\n\nBefore we match you with other roleplayers, you have the opportunity to fine-tune your match. You have the choice of 3 other matches, and can either say you are happy with any of them, remove one match from the possibilities, or otherwise decide you aren't feeling the roleplay this month and remove yourself. The matches will begin in 24 hours, and a lack of a reply will be taken as accepting any of the options. Enjoy!\n"
+      var embedText = "Welcome to the Roleplay Pre-Roulette!\n\nBefore we match you with other roleplayers, you have the opportunity to fine-tune your match. You have the choice of 3 other matches, and can either say you are happy with any of them, remove one match from the possibilities, or otherwise decide you aren't feeling the roleplay this month and remove yourself.\n\nThe matches will begin in 24 hours, and a lack of a reply will be taken as accepting any of the options. While we make  the best efforts to match you according to your preferences, please understand that this is not always possible. Happy roleplaying!\n"
       var selectOptions = new StringSelectMenuBuilder().setPlaceholder('Roleplay Preference').setCustomId('roulette-preference').addOptions(
           new StringSelectMenuOptionBuilder().setLabel('Happy with any').setValue('any'),
           new StringSelectMenuOptionBuilder().setLabel("I don't want to roleplay").setValue('none')
