@@ -49,6 +49,13 @@ async function drawTriple(channel, config, matches, sortedMatches) {
   return matches;
 }
 
+function compareShuffle(a, b) {
+  if (a.length > b.length) return 1;
+  if (a.length < b.length) return -1;
+  
+  return Math.random() - 0.5;
+}
+
 async function generateMatches(guild, config) {
   if (!guild) {
     return [];
@@ -63,7 +70,7 @@ async function generateMatches(guild, config) {
   
   var rouletteChannel = guild.channels.resolve(config.rouletteChannel);
   
-  var sortedMatches = Object.keys(matches).sort((a,b) => matches[a].length - matches[b].length).filter(x => x != KazeID);
+  var sortedMatches = Object.keys(matches).sort(compareShuffle).filter(x => x != KazeID);
   // Odd number of matches, try to find a triple
   if (sortedMatches.length % 2 == 1) {
     matches = await drawTriple(rouletteChannel, config, matches, sortedMatches);
@@ -73,7 +80,7 @@ async function generateMatches(guild, config) {
   
   while (Object.keys(matches).length >= 1) {
     // Prioritise people with fewest options
-    sortedMatches = Object.keys(matches).sort((a,b) => matches[a].length - matches[b].length).filter(x => x != KazeID);
+    sortedMatches = Object.keys(matches).sort(compareShuffle).filter(x => x != KazeID);
 
     if (matches[sortedMatches[0]].length > 0) {
       await setupRouletteChannel(rouletteChannel, [sortedMatches[0], matches[sortedMatches[0]][0]], config)
