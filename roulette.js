@@ -53,6 +53,11 @@ async function preference(interaction) {
     var matches = doc.matches || [];
     for (const id of matches) {
       var otherDoc = await collection.findOne({ _id: id })
+      
+      if (!otherDoc) {
+        continue;
+      }
+      
       var otherMatches = otherDoc.matches || [];
       await collection.findOneAndUpdate({ _id: id }, { $set: { matches: otherMatches.filter(x => x != roleplayer.id) }});
     }
