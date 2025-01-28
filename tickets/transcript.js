@@ -5,7 +5,12 @@ const template = `<Base-Transcript>
 <script src="https://tickettool.xyz/transcript/transcript.bundle.min.obv.js"></script><script type="text/javascript">function embedImages() { let dataNodes = Array.from(document.querySelectorAll('.chatlog .markdown')).filter(elem => elem.innerHTML.includes(' [[')); for (const node of dataNodes) { node.outerHTML = node.innerHTML.replaceAll('[[', '<').replaceAll(']]', '>') } } let channel = [channelinfo];let server = [serverinfo];let messages = [messageinfo];window.Convert(messages, channel, server); embedImages();</script>`;
 
 async function imageUrlToData(arrayBuffer, contentType) {
-  var base64Data = btoa(String.fromCharCode(...new Uint8Array(Buffer.from(arrayBuffer))));
+  var bytes = new Uint8Array(Buffer.from(arrayBuffer));
+  var binary = '';
+  for (var i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  var base64Data = btoa(binary);
   return` [[img style="max-height: 150px" src="data:${contentType};base64,${base64Data}" /]]`
 }
 
@@ -97,6 +102,8 @@ async function formatMessages(client, channel, messages, authors) {
   html = html.replace('[messageinfo]', JSON.stringify(allMessages));
 
   var file = new AttachmentBuilder(Buffer.from(html), { name: `${channel.name}.html` });
+
+  console.log(`HTML transcript created for ${channel.name}`);
  
   var archiveGuild = await channel.client.guilds.fetch('885290405850128414');
   var ticketArchive = await archiveGuild.channels.fetch('885290405850128417');
