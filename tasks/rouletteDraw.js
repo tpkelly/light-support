@@ -29,7 +29,7 @@ function removeMatch(id, matches) {
 
 async function drawTriple(channel, config, matches, sortedMatches) {
   for (const id of sortedMatches) {
-    for (const firstMatch of matches[id]) {
+    for (const firstMatch of matches[id].filter(x => x != KazeID)) {
       for (const secondMatch of matches[firstMatch])
       {
         // Found our triple
@@ -130,6 +130,7 @@ client.once('ready', async () => {
     await generateMatches(guild, guildConfig)
   } catch (err) {
     console.error(err);
+    common.sendHook(config.rouletteWebhook.id, config.rouletteWebhook.token, err);
   } finally {
     client.destroy();
   }

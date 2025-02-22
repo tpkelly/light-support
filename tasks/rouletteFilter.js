@@ -97,12 +97,13 @@ function sanityCheck(matches) {
     }
   }
   
+  /*
   // As a last resort, slot Kaze in as a universal match
   remainder = Object.keys(matches).filter(key => matches[key].length < 3)
   for (const id of remainder) {
     matches[id].push('181499334855098379');
   }
-  
+  */
   return matches;
 }
 
@@ -165,6 +166,7 @@ client.once('ready', async () => {
     }
   } catch (err) {
     console.error(err);
+    common.sendHook(config.rouletteWebhook.id, config.rouletteWebhook.token, err);
   } finally {
     client.destroy();
   }
