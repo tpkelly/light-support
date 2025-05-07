@@ -4,6 +4,9 @@ const { AttachmentBuilder } = require('discord.js');
 const template = `<Base-Transcript>
 <script src="https://tickettool.xyz/transcript/transcript.bundle.min.obv.js"></script><script type="text/javascript">function embedImages() { let dataNodes = Array.from(document.querySelectorAll('.chatlog .markdown')).filter(elem => elem.innerHTML.includes(' [[')); for (const node of dataNodes) { node.outerHTML = node.innerHTML.replaceAll('[[', '<').replaceAll(']]', '>') } } let channel = [channelinfo];let server = [serverinfo];let messages = [messageinfo];window.Convert(messages, channel, server); embedImages();</script>`;
 
+const archiveGuildId = '885290405850128414';
+const archiveChannelId = '885290405850128417';
+
 async function imageUrlToData(arrayBuffer, contentType) {
   var bytes = new Uint8Array(Buffer.from(arrayBuffer));
   var binary = '';
@@ -105,8 +108,8 @@ async function formatMessages(client, channel, messages, authors) {
 
   console.log(`HTML transcript created for ${channel.name}`);
  
-  var archiveGuild = await channel.client.guilds.fetch('885290405850128414');
-  var ticketArchive = await archiveGuild.channels.fetch('885290405850128417');
+  var archiveGuild = await channel.client.guilds.fetch(archiveGuildId);
+  var ticketArchive = await archiveGuild.channels.fetch(archiveChannelId);
  
   var transcriptMessage = await ticketArchive.send({files: [file] });
   for (const author of authors) {
@@ -131,7 +134,28 @@ async function create(client, ticket, authors) {
   await formatMessages(client, ticket, allMessages, authors);
 }
 
+async function transcriptUrl(client, ticketId) {
+  var doc = await client.mongo.collection('ticket').findOne({ _id: ticketId });
+ 
+  if (!doc) {
+    console.error(`Could not generate transcript for ${ticketId}`)
+    return 'https://nothing.com/';
+  }
+  
+  var currentUrl = doc.transcript;
+  var urlComponents = currentUrl.split('/');
+  var attachmentId = urlComponents[urlComponents.indexOf(archiveChannelId)+1]
+
+  var archiveGuild = await client.guilds.fetch(archiveGuildId);
+  var ticketArchive = await archiveGuild.channels.fetch(archiveChannelId);
+  var archiveMessages = await ticketArchive.messages.fetch({limit: 10, cache: false, around: attachmentId}) // Jank to try and find the rough location of the message that spawned from the attachment
+    .then(msgs => msgs.filter(x => x.attachments.first().id == attachmentId));
+  
+  return archiveMessages.first().attachments.first().url;
+}
+
 module.exports = {
   create: create,
+  transcriptUrl: transcriptUrl,
   fetchMessages: fetchMessages
 };

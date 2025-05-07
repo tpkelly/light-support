@@ -36,8 +36,8 @@ async function logForTicket(ticket) {
   return { message: logMessage, transcript: transcript };
 }
 
-async function ticketForLog(messageId) {
-  var doc = await ticket.client.mongo.collection('ticket').findOne({ logId: messageId });
+async function ticketForLog(message) {
+  var doc = await message.client.mongo.collection('ticket').findOne({ logId: message.id });
   
   if (!doc) {
     return;
@@ -123,13 +123,33 @@ async function logDeleted(ticket) {
   
   var buttons = new ActionRowBuilder()
     .addComponents(new ButtonBuilder().setLabel('Transcript').setStyle('Link').setURL(logDetails.transcript))
-    .addComponents(new ButtonBuilder().setLabel('Close Ticket').setStyle('Secondary').setCustomId('ticket-refresh'))
+    .addComponents(new ButtonBuilder().setLabel('Regenerate Transcript').setStyle('Secondary').setCustomId('ticket-refresh'))
   
   await logDetails.message.edit({
     embeds: [embed],
     components: [buttons]
   });
   await util.updateData(ticket.client, ticket.id, { status: 'DELETED' })
+}
+
+async function logRefresh(logMessage) {
+  var ticketId = await ticketForLog(logMessage);
+  var transcriptUrl = await transcript.transcriptUrl(logMessage.client, ticketId);
+  
+  /*
+  await logMessage.client.mongo.collection('ticket').findOneAndUpdate(
+    { _id: ticketId },
+    { $set: { transcript: transcriptUrl } }
+  );
+  */
+  
+  var buttons = new ActionRowBuilder()
+    .addComponents(new ButtonBuilder().setLabel('Transcript').setStyle('Link').setURL(transcriptUrl))
+    .addComponents(new ButtonBuilder().setLabel('Regenerate Transcript').setStyle('Secondary').setCustomId('ticket-refresh'))
+  
+  await logMessage.edit({
+    components: [buttons]
+  });
 }
 
 module.exports = {
@@ -139,5 +159,5 @@ module.exports = {
   logHold: logHold,
   logReassigned: logReassigned,
   logDeleted: logDeleted,
-  ticketForLog: ticketForLog,
+  logRefresh: logRefresh,
 };

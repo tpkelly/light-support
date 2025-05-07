@@ -155,8 +155,8 @@ function deleteTicket(interaction, ticket) {
 }
 
 function refreshTranscript(interaction, logMessage) {
-  var ticketId = log.ticketForLog(logMessage.id);
-  
+  log.logRefresh(logMessage)
+    .then(() => interaction.deferUpdate());
 }
 
 async function reasonPrompt(interaction) {
