@@ -60,6 +60,10 @@ async function componentInteraction(interaction, client) {
       ticket.transcript(interaction.channel);
       break;
 
+    case 'ticket-refresh':
+      ticket.refreshTranscript(interaction, interaction.message);
+      break;
+
     case 'roulette-join':
       await roulette.join(interaction);
       break;

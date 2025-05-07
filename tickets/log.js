@@ -36,6 +36,16 @@ async function logForTicket(ticket) {
   return { message: logMessage, transcript: transcript };
 }
 
+async function ticketForLog(messageId) {
+  var doc = await ticket.client.mongo.collection('ticket').findOne({ logId: messageId });
+  
+  if (!doc) {
+    return;
+  }
+  
+  return doc.id;
+}
+
 async function logCreated(ticket, logChannelId) {
   var logChannel = await ticket.guild.channels.fetch(logChannelId);
 
@@ -111,9 +121,13 @@ async function logDeleted(ticket) {
   var embed = common.styledEmbed(ticket.name, 'Ticket Deleted',  0x8080a0);
   embed.fields = await fieldsForTicket(ticket, 'DELETED');
   
+  var buttons = new ActionRowBuilder()
+    .addComponents(new ButtonBuilder().setLabel('Transcript').setStyle('Link').setURL(logDetails.transcript))
+    .addComponents(new ButtonBuilder().setLabel('Close Ticket').setStyle('Secondary').setCustomId('ticket-refresh'))
+  
   await logDetails.message.edit({
     embeds: [embed],
-    components: [new ActionRowBuilder().addComponents(new ButtonBuilder().setLabel('Transcript').setStyle('Link').setURL(logDetails.transcript))]
+    components: [buttons]
   });
   await util.updateData(ticket.client, ticket.id, { status: 'DELETED' })
 }
@@ -125,4 +139,5 @@ module.exports = {
   logHold: logHold,
   logReassigned: logReassigned,
   logDeleted: logDeleted,
+  ticketForLog: ticketForLog,
 };

@@ -154,6 +154,11 @@ function deleteTicket(interaction, ticket) {
   setTimeout(() => log.logDeleted(ticket).then(() => ticket.delete()), 10000);
 }
 
+function refreshTranscript(interaction, logMessage) {
+  var ticketId = log.ticketForLog(logMessage.id);
+  
+}
+
 async function reasonPrompt(interaction) {
   const modal = new ModalBuilder()
     .setCustomId(interaction.customId.replace('ticket-reason-', 'ticket-new-'))
@@ -179,6 +184,7 @@ module.exports = {
   close: closeTicket,
   reopen: reopenTicket,
   delete: deleteTicket,
+  refreshTranscript: refreshTranscript,
   addAuthor: addAuthor,
   reasonPrompt: reasonPrompt,
   isTicketChannel: isTicketChannel
