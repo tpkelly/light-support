@@ -134,7 +134,7 @@ async function logDeleted(ticket) {
 
 async function logRefresh(logMessage) {
   var ticketId = await ticketForLog(logMessage);
-  var transcriptUrl = await transcript.transcriptUrl(logMessage.client, ticketId);
+  return await transcript.transcriptUrl(logMessage.client, ticketId);
   
   /*
   await logMessage.client.mongo.collection('ticket').findOneAndUpdate(
@@ -142,14 +142,6 @@ async function logRefresh(logMessage) {
     { $set: { transcript: transcriptUrl } }
   );
   */
-  
-  var buttons = new ActionRowBuilder()
-    .addComponents(new ButtonBuilder().setLabel('Transcript').setStyle('Link').setURL(transcriptUrl))
-    .addComponents(new ButtonBuilder().setLabel('Regenerate Transcript').setStyle('Secondary').setCustomId('ticket-refresh'))
-  
-  await logMessage.edit({
-    components: [buttons]
-  });
 }
 
 module.exports = {

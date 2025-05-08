@@ -155,8 +155,20 @@ function deleteTicket(interaction, ticket) {
 }
 
 function refreshTranscript(interaction, logMessage) {
+  interaction.deferReply({ ephemeral: true })
+  
   log.logRefresh(logMessage)
-    .then(() => interaction.deferUpdate());
+    .then(async transcriptUrl => {
+        var buttons = new ActionRowBuilder()
+          .addComponents(new ButtonBuilder().setLabel('Transcript').setStyle('Link').setURL(transcriptUrl))
+        
+        await interaction.editReply({
+          content: 'Generated Transcript link',
+          ephemeral: true,
+          components: [buttons]
+        });
+
+    });
 }
 
 async function reasonPrompt(interaction) {
