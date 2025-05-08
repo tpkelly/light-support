@@ -154,10 +154,10 @@ function deleteTicket(interaction, ticket) {
   setTimeout(() => log.logDeleted(ticket).then(() => ticket.delete()), 10000);
 }
 
-function refreshTranscript(interaction, logMessage) {
-  interaction.deferReply({ ephemeral: true })
+async function refreshTranscript(interaction, logMessage) {
+  await interaction.deferReply({ ephemeral: true })
   
-  log.logRefresh(logMessage)
+  await log.logRefresh(logMessage)
     .then(async transcriptUrl => {
         var buttons = new ActionRowBuilder()
           .addComponents(new ButtonBuilder().setLabel('Transcript').setStyle('Link').setURL(transcriptUrl))
