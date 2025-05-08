@@ -122,8 +122,7 @@ async function logDeleted(ticket) {
   embed.fields = await fieldsForTicket(ticket, 'DELETED');
   
   var buttons = new ActionRowBuilder()
-    .addComponents(new ButtonBuilder().setLabel('Transcript').setStyle('Link').setURL(logDetails.transcript))
-    .addComponents(new ButtonBuilder().setLabel('Regenerate Transcript').setStyle('Secondary').setCustomId('ticket-refresh'))
+    .addComponents(new ButtonBuilder().setLabel('Download Transcript').setStyle('Secondary').setCustomId('ticket-refresh'))
   
   await logDetails.message.edit({
     embeds: [embed],
