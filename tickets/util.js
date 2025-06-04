@@ -43,7 +43,8 @@ async function setData(client, ticketId, data) {
     { _id: ticketId },
     data,
     { upsert: true }
-  );}
+  );
+}
 
 async function updateData(client, ticketId, data) {
   await client.mongo.collection('ticket').findOneAndUpdate(
