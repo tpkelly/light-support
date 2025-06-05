@@ -9,7 +9,7 @@ module.exports = {
     const newMember = args[1];
     
     var newRoles = arrDiff(newMember.roles.cache.map(r => r.id), oldMember.roles.cache.map(r => r.id));
-    if (newRoles && newRoles[0] == beepBoopRole) {
+    if (newRoles && newRoles.includes(beepBoopRole)) {
       // Don't kick actual discord bots
       if (newMember.user.bot) {
         return;
