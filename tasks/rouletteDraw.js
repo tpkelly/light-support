@@ -92,6 +92,7 @@ async function generateMatches(guild, config) {
     matches = removeMatch(sortedMatches[0], matches);
   }
   
+  console.log('Handle unpaired matches');
   // Plan B: Pair together anybody who was unable to be matched
   for (var i = 0; i < unmatched.length; i+=2) {
     await setupRouletteChannel(rouletteChannel, [unmatched[i], unmatched[i+1]], config)
@@ -117,6 +118,8 @@ async function setupRouletteChannel(parentChannel, roleplayers, config) {
     var row = new ActionRowBuilder()
       .addComponents(new ButtonBuilder().setLabel('Issue with my match').setStyle('Danger').setCustomId('roulette-problem'))
       .addComponents(new ButtonBuilder().setLabel('Send us Feedback').setStyle('Primary').setCustomId('roulette-feedback'))
+    
+    console.log(`Matching ${roleplayers.join(', ')}`);
     
     await thread.send({ content: `<@${roleplayers.join('> <@')}>`, embeds: [embed], components: [row] });
   });
