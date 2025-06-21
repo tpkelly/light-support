@@ -125,7 +125,7 @@ async function notifyMatches(guild, guildConfig, matches) {
   
   for (const key of Object.keys(matches)) {
     var options = matches[key]
-    await collection.insertOne({ _id: key, matches: options });
+    await collection.insertOne({ _id: key, matches: options, veto: [] });
   
     await rouletteChannel.threads.create({
       name: 'Roulette Preference',

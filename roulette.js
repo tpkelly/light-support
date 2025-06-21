@@ -69,7 +69,7 @@ async function preference(interaction) {
       console.log(`${roleplayer.id} vetoed ${value}`);
       var doc = await collection.findOne({ _id: roleplayer.id })
       var matches = doc.matches || [];
-      await collection.findOneAndUpdate({ _id: roleplayer.id }, { $set: { matches: matches.filter(x => x != value) }});
+      await collection.findOneAndUpdate({ _id: roleplayer.id }, { $set: { matches: matches.filter(x => x != value), veto: [ value ] }});
       
       // And the reverse
       doc = await collection.findOne({ _id: value })
