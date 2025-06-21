@@ -2,15 +2,9 @@ const { ChannelType, ActionRowBuilder, ButtonBuilder } = require('discord.js');
 
 const common = require('../common.js');
 
-const KazeID = '181499334855098379'
-
 function removeMatch(id, matches) {
-  if (id == KazeID) {
-    return matches;
-  }
-  
-  for (const match of matches[id].filter(x => x != KazeID)) {
-    matches[match] = matches[match].filter(x => x != id)
+  for (const match of matches[id].matches) {
+    matches[match].matches = matches[match].matches.filter(x => x != id)
   }
   
   delete matches[id];
@@ -20,7 +14,7 @@ function removeMatch(id, matches) {
 
 async function drawTriple(channel, config, matches, sortedMatches) {
   for (const id of sortedMatches) {
-    for (const firstMatch of matches[id].filter(x => x != KazeID)) {
+    for (const firstMatch of matches[id]) {
       for (const secondMatch of matches[firstMatch])
       {
         // Found our triple
@@ -41,10 +35,25 @@ async function drawTriple(channel, config, matches, sortedMatches) {
 }
 
 function compareShuffle(a, b) {
-  if (a.length > b.length) return 1;
-  if (a.length < b.length) return -1;
+  if (a.value.matches.length == b.value.matches.length) {
+    return Math.random() - 0.5 - (a.value.veto?.length || 0) + (b.value.veto?.length || 0)
+  }
   
-  return Math.random() - 0.5;
+  // Push results with no valid matches to the end
+  if (a.value.matches.length == 0) return 1;
+  if (b.value.matches.length == 0) return -1;
+  
+  // Prioritise results with fewer valid matches
+  if (a.value.matches.length > b.value.matches.length) return 1;
+  if (a.value.matches.length < b.value.matches.length) return -1;
+}
+
+function mapObject(obj) {
+  var result = [];
+  for (let key in obj) {
+    result.push({ key: key, value: obj[key] })
+  }
+  return result;
 }
 
 async function generateMatches(guild, config) {
@@ -56,19 +65,22 @@ async function generateMatches(guild, config) {
 
   if (config.testdata) {
     for (const row of config.testdata) {
-      matches[row['_id']] = row['matches'];
+      matches[row['_id']] = row;
     }
   } else {
     var mongo = new MongoClient(auth.mongodb).db();
     var collection = mongo.collection('roulette');
     for (const row of await collection.find().toArray()) {
-      matches[row['_id']] = row['matches'];
+      matches[row['_id']] = row;
     }
   }
   
   var rouletteChannel = guild.channels.resolve(config.rouletteChannel);
   
-  var sortedMatches = Object.keys(matches).sort(compareShuffle).filter(x => x != KazeID);
+  var sortedMatches = mapObject(matches).sort(compareShuffle).map(x => x.key);;
+  //console.dir(sortedMatches, { depth: null});
+  //console.dir(matches, { depth: null});
+  
   // Odd number of matches, try to find a triple
   if (sortedMatches.length % 2 == 1) {
     matches = await drawTriple(rouletteChannel, config, matches, sortedMatches);
@@ -78,11 +90,11 @@ async function generateMatches(guild, config) {
   
   while (Object.keys(matches).length >= 1) {
     // Prioritise people with fewest options
-    sortedMatches = Object.keys(matches).sort(compareShuffle).filter(x => x != KazeID);
+    sortedMatches = mapObject(matches).sort(compareShuffle).map(x => x.key);
 
-    if (matches[sortedMatches[0]].length > 0) {
-      await setupRouletteChannel(rouletteChannel, [sortedMatches[0], matches[sortedMatches[0]][0]], config)
-      matches = removeMatch(matches[sortedMatches[0]][0], matches)
+    if (matches[sortedMatches[0]].matches.length > 0) {
+      await setupRouletteChannel(rouletteChannel, [sortedMatches[0], matches[sortedMatches[0]].matches[0]], config)
+      matches = removeMatch(matches[sortedMatches[0]].matches[0], matches)
     } else { // We ran out of matches for this person, so go to Plan B
       unmatched.push(sortedMatches[0]);
     }
