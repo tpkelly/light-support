@@ -1,4 +1,4 @@
-const { Client, Collection, IntentsBitField, ApplicationCommandType } = require('discord.js');
+const { Client, Collection, IntentsBitField, ApplicationCommandType, ActivityType } = require('discord.js');
 const fs = require('fs');
 const { MongoClient } = require('mongodb');
 
@@ -11,8 +11,8 @@ const auth = require('./auth.json');
 const config = require('./config.js');
 
 client.once('ready', async () => {
-  client.user.setActivity("If broke, return to Kazenone");
-  
+  client.user.setActivity({ name: 'If broke, return to Kazenone', type: ActivityType.Custom });
+
   client.mongo = new MongoClient(auth.mongodb).db();
   
   // Register commands
