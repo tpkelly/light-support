@@ -15,6 +15,7 @@ const logic = require('./rouletteLogic.js');
 client.once('ready', async () => {
   console.log(`Roulette Draw task as ${client.user.tag} @ ${new Date().toLocaleString()}!`);
   try {
+    client.mongo = new MongoClient(auth.mongodb).db()
     var guildConfig = config['1153335701186809856'];
     var guild = client.guilds.resolve(guildConfig.id);
     await logic.generateMatches(guild, guildConfig)

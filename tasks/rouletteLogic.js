@@ -14,11 +14,11 @@ function removeMatch(id, matches) {
 
 async function drawTriple(channel, config, matches, sortedMatches) {
   for (const id of sortedMatches) {
-    for (const firstMatch of matches[id]) {
-      for (const secondMatch of matches[firstMatch])
+    for (const firstMatch of matches[id].matches) {
+      for (const secondMatch of matches[firstMatch].matches)
       {
         // Found our triple
-        if (matches[secondMatch] && matches[secondMatch].includes(id)) {
+        if (matches[secondMatch].matches && matches[secondMatch].matches.includes(id)) {
           matches = removeMatch(id, matches)
           matches = removeMatch(firstMatch, matches)
           matches = removeMatch(secondMatch, matches)
@@ -68,8 +68,7 @@ async function generateMatches(guild, config) {
       matches[row['_id']] = row;
     }
   } else {
-    var mongo = new MongoClient(auth.mongodb).db();
-    var collection = mongo.collection('roulette');
+    var collection = guild.client.mongo.collection('roulette');
     for (const row of await collection.find().toArray()) {
       matches[row['_id']] = row;
     }
@@ -88,7 +87,7 @@ async function generateMatches(guild, config) {
   
   var unmatched = [];
   
-  while (Object.keys(matches).length >= 1) {
+  while (Object.keys(matches).length >= 2) {
     // Prioritise people with fewest options
     sortedMatches = mapObject(matches).sort(compareShuffle).map(x => x.key);
 
