@@ -1,6 +1,7 @@
 const { Events } = require('discord.js');
 const roulette = require('../roulette.js');
 const ticket = require('../ticket.js');
+const optIn = require('../optInRole.js');
 
 function noSuchCommand(client, interaction) {
   interaction.editReply({ content: 'No such command', ephemeral: true })
@@ -83,6 +84,10 @@ async function componentInteraction(interaction, client) {
     case 'roulette-preference':
       roulette.preference(interaction);
       break;
+	  
+    case 'opt-in-toggle':
+	    await optIn.toggle(interaction);
+	    break;
     
     default: interaction.reply({ content: 'Unknown interaction', ephemeral: true });
       break;

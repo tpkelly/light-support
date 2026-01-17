@@ -1,6 +1,10 @@
 {
-  "clientId":"<Discord Client ID>",
-  "clientSecret":"<Discord Client Secret>",
-  "discord":"<Discord Bot Token>",
-  "mongodb":"mongodb://<url>"
+  "clientId": "<Discord Client ID>",
+  "clientSecret": "<Discord Client Secret>",
+  "rouletteWebhook": {
+    "id": "<Channel ID>",
+    "token": "<Webhook Token>"
+  },
+  "discord": "<Discord Bot Token>",
+  "mongodb": "mongodb://<url>"
 }
