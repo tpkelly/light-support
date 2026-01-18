@@ -10,12 +10,13 @@ module.exports = {
       return;
     }
     
-    // Only look at venue postings
-    if (message.channel.id != '1153338619977797682') {
+    // Only look at announcement channels
+    if (!message.crosspostable) {
       return;
     }
     
-    if (!message.crosspostable) {
+    // Does not have the opt-in role
+    if (!interaction.member.roles.cache.some(role => role.id == '1462131265682542743')) {
       return;
     }
     
