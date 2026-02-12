@@ -5,7 +5,7 @@ const client = new Client({
   partials: ['MESSAGE', 'CHANNEL']
 });
 
-const matchData = require('./roulette.data.js');
+const { matchData } = require('./roulette.data.js');
 
 const auth = require('../auth.json');
 const config = require('../config.js');
@@ -16,6 +16,7 @@ client.once('ready', async () => {
   try {
     var guildConfig = config['1153335701186809856'];
     var guild = client.guilds.resolve(guildConfig.id);
+
     guildConfig.testdata = matchData;
     
     await logic.generateMatches(guild, guildConfig)

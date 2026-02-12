@@ -23,7 +23,7 @@ async function drawTriple(channel, config, matches, sortedMatches) {
           matches = removeMatch(firstMatch, matches)
           matches = removeMatch(secondMatch, matches)
           
-          await setupRouletteChannel(channel, [id, firstMatch, secondMatch], config)
+          await setupRouletteChannel(channel, config, [id, firstMatch, secondMatch])
           return matches;
         }
       }
@@ -92,7 +92,7 @@ async function generateMatches(guild, config) {
     sortedMatches = mapObject(matches).sort(compareShuffle).map(x => x.key);
 
     if (matches[sortedMatches[0]].matches.length > 0) {
-      await setupRouletteChannel(rouletteChannel, [sortedMatches[0], matches[sortedMatches[0]].matches[0]], config)
+      await setupRouletteChannel(rouletteChannel, config, [sortedMatches[0], matches[sortedMatches[0]].matches[0]])
       matches = removeMatch(matches[sortedMatches[0]].matches[0], matches)
     } else { // We ran out of matches for this person, so go to Plan B
       unmatched.push(sortedMatches[0]);
@@ -103,14 +103,17 @@ async function generateMatches(guild, config) {
   
   console.log('Handle unpaired matches');
   // Plan B: Pair together anybody who was unable to be matched
-  for (var i = 0; i < unmatched.length; i+=2) {
-    await setupRouletteChannel(rouletteChannel, [unmatched[i], unmatched[i+1]], config)
+  var i = 0;
+  for (; i < unmatched.length-3; i+=2) {
+    await setupRouletteChannel(rouletteChannel, config, [unmatched[i], unmatched[i+1]])
   }
+  
+  await setupRouletteChannel(rouletteChannel, config, unmatched.splice(i))
   
   console.log('Done with matches');
 }
 
-async function setupRouletteChannel(parentChannel, roleplayers, config) {
+async function setupRouletteChannel(parentChannel, config, roleplayers) {
   console.log(`Matching ${roleplayers.join(', ')}`);
   
   // Don't create channels if this is only a test
