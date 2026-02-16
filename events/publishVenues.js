@@ -16,7 +16,7 @@ module.exports = {
     }
     
     // Does not have the opt-in role
-    if (!interaction.member.roles.cache.some(role => role.id == '1462131265682542743')) {
+    if (!message.member.roles.cache.some(role => role.id == '1462131265682542743')) {
       return;
     }
     
