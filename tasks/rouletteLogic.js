@@ -101,6 +101,8 @@ async function generateMatches(guild, config) {
     matches = removeMatch(sortedMatches[0], matches);
   }
   
+  unmatched = unmatched.concat(Object.keys(matches));
+  
   console.log('Handle unpaired matches');
   // Plan B: Pair together anybody who was unable to be matched
   var i = 0;
