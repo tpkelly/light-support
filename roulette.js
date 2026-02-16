@@ -91,6 +91,7 @@ async function preference(interaction) {
 }
 
 async function problem(interaction) {
+  await interaction.deferUpdate();
   var guildConfig = config[interaction.guild.id];
   var feedbackChannel = interaction.guild.channels.resolve(guildConfig.notifyChannel);
   
