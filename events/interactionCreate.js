@@ -46,6 +46,7 @@ async function componentInteraction(interaction, client) {
   
   switch (interaction.customId) {
     case 'ticket-close':
+      await interaction.deferReply()
       ticket.close(interaction, interaction.channel);
       break;
       

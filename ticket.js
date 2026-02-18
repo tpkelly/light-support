@@ -104,7 +104,7 @@ async function closeTicket(interaction, ticket) {
     .addComponents(new ButtonBuilder().setLabel('Re-open ticket').setStyle('Primary').setCustomId('ticket-reopen'))
     .addComponents(new ButtonBuilder().setLabel('Delete Ticket').setStyle('Danger').setCustomId('ticket-delete'))
 
-  await interaction.reply({ embeds: [common.styledEmbed('Ticket closed', 'Generating automatic transcript')], components: [pendingRow]})
+  await interaction.editReply({ embeds: [common.styledEmbed('Ticket closed', 'Generating automatic transcript')], components: [pendingRow]})
     .then(() => tickutil.renameTicket(ticket, { closed: true }))
     .then(() => transcript.create(ticket.client, ticket, ticketAuthors))
     .then(() => interaction.editReply({ embeds: [common.styledEmbed('Ticket closed', 'Generated automatic transcript')], components: [finishedRow]}))
