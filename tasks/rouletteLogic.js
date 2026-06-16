@@ -87,7 +87,7 @@ async function generateMatches(guild, config) {
   
   var unmatched = [];
   
-  while (Object.keys(matches).length >= 2) {
+  while (Object.keys(matches).length > 3) {
     // Prioritise people with fewest options
     sortedMatches = mapObject(matches).sort(compareShuffle).map(x => x.key);
 
