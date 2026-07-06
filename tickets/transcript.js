@@ -40,7 +40,7 @@ async function formatMessages(client, channel, messages, authors) {
     try {
       var recipient = await channel.guild.members.fetch(author);
       var recipientDM = recipient.dmChannel || await recipient.createDM();
-      await recipientDM.send({files: [file] });
+      await recipientDM.send({content: `Your ${channel.name} ticket in LRC has now been closed. The full transcript of the ticket is attached:`, files: [file] });
     } catch {
       console.error(`Could not send transcript to ${author}`);
     }
