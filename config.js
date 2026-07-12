@@ -16,11 +16,11 @@ const lightRPC = {
   rouletteRole: '1162145407888003215',
   rouletteChannel: '1153338811015757864',
   notifyChannel: '1165645990066405376',
-  adminRoles: ['1153340437076127866'],
+  adminRoles: ['1153340437076127866', '1525203838678859796'],
   ticketCategory: '1171907138419961917',
   createTicketBoilerplate: 'Need to get in touch with our staff? Use the buttons below to raise a ticket',
   styleConfig: {
-    'general': { roles: ["1153340437076127866"], prefix: 'general', buttonTitle: 'General Queries', title: 'General Query', emoji: '❓', intro: ticketQuery, logChannel: "1171907552699764797" }
+    'general': { roles: ['1153340437076127866', '1525203838678859796'], prefix: 'general', buttonTitle: 'General Queries', title: 'General Query', emoji: '❓', intro: ticketQuery, logChannel: "1171907552699764797" }
   }
 }
 
