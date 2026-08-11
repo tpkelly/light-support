@@ -3,6 +3,7 @@ const utils = require('./transcriptUtils.js')
 
 const archiveGuildId = '885290405850128414';
 const archiveChannelId = '885290405850128417';
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 async function fetchMessages(channel) {
   var messages = [];
@@ -28,14 +29,17 @@ async function fetchMessages(channel) {
 
 async function formatMessages(client, channel, messages, authors) {
   var html = await utils.formatMessages(channel, messages);
+  if (html.length > MAX_FILE_SIZE) {
+    html = await utils.formatMessages(channel, messages, true);
+  }
   var file = new AttachmentBuilder(Buffer.from(html), { name: `${channel.name}.html` });
 
   console.log(`HTML transcript created for ${channel.name}`);
  
   var archiveGuild = await channel.client.guilds.fetch(archiveGuildId);
   var ticketArchive = await archiveGuild.channels.fetch(archiveChannelId);
- 
   var transcriptMessage = await ticketArchive.send({files: [file] });
+  
   for (const author of authors) {
     try {
       var recipient = await channel.guild.members.fetch(author);

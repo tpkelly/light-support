@@ -30,12 +30,17 @@ function mapMentions(guild, mentions) {
   return discordData;
 }
 
-async function ticketMessageObject(message) {
+async function ticketMessageObject(message, textOnly) {
   var content = message.content;
   for (const attachment of message.attachments.values()) {
-    var fileData = await fetch(attachment.attachment)
-      .then(res => res.arrayBuffer())
-      .then(data => imageUrlToData(data, attachment.contentType));
+    var fileData = ''
+    if (textOnly) {
+      fileData = `\`\`Image: ${attachment.name}\`\``
+    } else {
+      fileData = await fetch(attachment.attachment)
+        .then(res => res.arrayBuffer())
+        .then(data => imageUrlToData(data, attachment.contentType));
+    }
     
     content = content ? `${content}\n ${fileData}` : fileData;
   }
@@ -68,8 +73,8 @@ async function ticketMessageObject(message) {
 	}
 }
 
-async function formatMessages(channel, messages) {
-  var allMessages = await Promise.all(messages.map(m => ticketMessageObject(m)))
+async function formatMessages(channel, messages, textOnly) {
+  var allMessages = await Promise.all(messages.map(m => ticketMessageObject(m, textOnly)))
 
   // Turn groups into HTML somehow
   var html = template;
