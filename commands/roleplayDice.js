@@ -110,7 +110,7 @@ const common = require('../common.js');
     ]}
   ]
 
-const setting = [ 'Business meeting', 'Random encounter', 'Social event', 'Just a dream...', 'Adventure', 'Sightseeing/Field trip', 'Shopping', 'Hunting' ];
+const setting = [ 'A chance to make some gil', 'Random encounter', 'Social event', 'Just a dream...', 'Adventure', 'Sightseeing/Field trip', 'Shopping', 'Hunting', 'Investigating a mystery', 'Your skills are required', 'The start of a journey', 'Vacation time!', 'Family connection', 'You received a letter' ];
 const how = [ 'Friendly', 'Polite', 'Tense', 'Fight!!!', 'Competition', 'Teaming up' ];
 
 function randomElement(arr) {
