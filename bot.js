@@ -10,7 +10,7 @@ const client = new Client({
 const auth = require('./auth.json');
 const config = require('./config.js');
 
-client.once('ready', async () => {
+client.once('clientReady', async () => {
   client.user.setActivity({ name: 'If broke, return to Kazenone', type: ActivityType.Custom });
 
   client.mongo = new MongoClient(auth.mongodb).db();
