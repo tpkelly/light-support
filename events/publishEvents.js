@@ -14,7 +14,7 @@ module.exports = {
       return;
     }
     
-    await new Promise(resolve => setTimeout(resolve, 10000))
+    await new Promise(resolve => setTimeout(resolve, 60000))
     
     var firstPost = await channel.fetchStarterMessage();
     
